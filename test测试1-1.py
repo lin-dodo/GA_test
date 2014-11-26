@@ -7,7 +7,7 @@ from pyevolve import G1DList
 from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
-
+f=open('1-1.txt','w+')
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 list_zhonglei=[]
@@ -220,8 +220,8 @@ def main_run(l):
     a=run(all_row,l)
     return a
 
-test_days=110
-run_days=110
+test_days=30
+run_days=30
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
 start=datetime.datetime(2010,7,26,0,0,0)
@@ -245,6 +245,10 @@ row_run=[]
 ##ga.setGenerations(20)
 temp=[]
 while(end<=stop):
+    s=start.strftime('%y-%m-%d')
+    m=mid.strftime('%y-%m-%d')
+    e=end.strftime('%y-%m-%d')
+    f.write(s+' '+m+' '+e+'\n')
     print end
     genome = G1DList.G1DList(x_len)
     #genome.setParams(rangemin=0,rangemax=2)
@@ -266,6 +270,9 @@ while(end<=stop):
 ##        print len(row_test),1
 ##        print len(row_run),2
     print best[0:]
+    a=best[0:]
+    a=str(a)
+    f.write(a+'\n')
     temp=temp+main_run(best[0:])
     start=start+t2
     mid=mid+t2
@@ -276,7 +283,7 @@ for i in xrange(len(temp)):
     proo.append(sum(temp[:i+1]))
 x=xrange(len(proo))
 plot(x,proo)
-show()
-    
+savefig(r'1-1.png')
+f.close()
 conn.close()
 cursor.close()
