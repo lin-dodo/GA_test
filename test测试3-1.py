@@ -23,7 +23,7 @@ nn=cursor.execute(sql)
 row_dic=cursor.fetchall()
 dic_unit=dict(row_dic)
  
-x_len=22
+x_len=21
 for i in xrange(x_len):
     sql="select * from data where ID=%s ;"%i
     m=cursor.execute(sql)
@@ -224,8 +224,8 @@ test_days=90
 run_days=30
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
-start=datetime.datetime(2010,7,26,0,0,0)
-stop=datetime.datetime(2014,9,26,0,0,0)
+start=datetime.datetime(2011,3,23,0,0,0)
+stop=datetime.datetime(2013,12,7,0,0,0)
 mid=start+t1
 end=start+t2+t1
 row_test=[]
@@ -262,8 +262,8 @@ while(end<=stop):
     ga.selector.set(Selectors.GRouletteWheel)
     ga.setMutationRate(0.8)
     ga.setPopulationSize(100)
-    ga.setGenerations(50)
-    ga.evolve(10)
+    ga.setGenerations(80)
+    ga.evolve(40)
     best=ga.bestIndividual()
     #row_test=output_test([1])
     #row_run=output_run([0,1])

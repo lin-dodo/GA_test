@@ -7,7 +7,7 @@ from pyevolve import G1DList
 from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
-f=open('1-1.txt','w+')
+f=open('6-3.txt','w+')
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 list_zhonglei=[]
@@ -23,7 +23,7 @@ nn=cursor.execute(sql)
 row_dic=cursor.fetchall()
 dic_unit=dict(row_dic)
  
-x_len=21
+x_len=22
 for i in xrange(x_len):
     sql="select * from data where ID=%s ;"%i
     m=cursor.execute(sql)
@@ -75,7 +75,7 @@ def test(list_signal,l):
     global c
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -146,7 +146,7 @@ def test(list_signal,l):
 def run(list_signal,l):
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -220,12 +220,12 @@ def main_run(l):
     a=run(all_row,l)
     return a
 
-test_days=30
-run_days=30
+test_days=180
+run_days=90
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
-start=datetime.datetime(2011,3,23,0,0,0)
-stop=datetime.datetime(2013,12,7,0,0,0)
+start=datetime.datetime(2010,7,26,0,0,0)
+stop=datetime.datetime(2014,9,26,0,0,0)
 mid=start+t1
 end=start+t2+t1
 row_test=[]
@@ -249,20 +249,21 @@ while(end<=stop):
     m=mid.strftime('%y-%m-%d')
     e=end.strftime('%y-%m-%d')
     f.write(s+' '+m+' '+e+'\n')
+    
     print end
     genome = G1DList.G1DList(x_len)
-    genome.setParams(rangemin=0,rangemax=20)
-    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-    genome.initializator.set(Initializators.G1DListInitializatorInteger)
-    genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
+    #genome.setParams(rangemin=0,rangemax=2)
+    genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
+    genome.initializator.set(Initializators.G1DListInitializatorInteger_my)#G1DListInitializatorInteger_my)
+    genome.mutator.set(Mutators.G1DListMutatorInteger_my)
     genome.evaluator.set(main_test)
     genome.crossover.clear()
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GRouletteWheel)
-    ga.setMutationRate(0.9)
-    ga.setPopulationSize(80)
-    ga.setGenerations(250)
-    ga.evolve(25)
+    ga.setMutationRate(0.8)
+    ga.setPopulationSize(100)
+    ga.setGenerations(80)
+    ga.evolve(10)
     best=ga.bestIndividual()
     #row_test=output_test([1])
     #row_run=output_run([0,1])
@@ -283,7 +284,7 @@ for i in xrange(len(temp)):
     proo.append(sum(temp[:i+1]))
 x=xrange(len(proo))
 plot(x,proo)
-savefig(r'1-1.png')
+savefig(r'6-3.png')
 f.close()
 conn.close()
 cursor.close()

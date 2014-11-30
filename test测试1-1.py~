@@ -75,7 +75,7 @@ def test(list_signal,l):
     global c
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -146,7 +146,7 @@ def test(list_signal,l):
 def run(list_signal,l):
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -251,18 +251,18 @@ while(end<=stop):
     f.write(s+' '+m+' '+e+'\n')
     print end
     genome = G1DList.G1DList(x_len)
-    genome.setParams(rangemin=0,rangemax=20)
-    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-    genome.initializator.set(Initializators.G1DListInitializatorInteger)
-    genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
+    #genome.setParams(rangemin=0,rangemax=2)
+    genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
+    genome.initializator.set(Initializators.G1DListInitializatorInteger_my)#G1DListInitializatorInteger_my)
+    genome.mutator.set(Mutators.G1DListMutatorInteger_my)
     genome.evaluator.set(main_test)
     genome.crossover.clear()
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GRouletteWheel)
-    ga.setMutationRate(0.9)
-    ga.setPopulationSize(80)
-    ga.setGenerations(250)
-    ga.evolve(25)
+    ga.setMutationRate(1)
+    ga.setPopulationSize(100)
+    ga.setGenerations(100)
+    ga.evolve(50)
     best=ga.bestIndividual()
     #row_test=output_test([1])
     #row_run=output_run([0,1])

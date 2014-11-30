@@ -23,7 +23,7 @@ nn=cursor.execute(sql)
 row_dic=cursor.fetchall()
 dic_unit=dict(row_dic)
  
-x_len=22
+x_len=21
 lost_signal=[0]*x_len
 for i in xrange(x_len):
     sql="select * from data where ID=%s ;"%i
@@ -55,7 +55,11 @@ def output_test(list_lots):
             row=cursor.fetchall()
             all_row_test=all_row_test+list(row)
     return all_row_test
+##第一次读要把平仓的去掉，这个还没写
+##下面的是第一次之后的
 def output_run(list_lots):
+    global con
+    global lost_signal
     global mid
     global end
     m=mid.strftime('%y-%m-%d')
@@ -68,14 +72,22 @@ def output_run(list_lots):
             sql="select * from data where ID=%s and Date>='%s' and Date<'%s' ;"%(i,mm,ee)
             m=cursor.execute(sql)
             row=cursor.fetchall()
-            all_row_run=all_row_run+list(row)
+            row=list(row)
+            if len(row)>0 and con==1:
+                if row[-1][2]==1 or row[-1][2]==-1:
+                    lost_signal[i]=row[-1][3]
+            if len(row)>0 and con==0:
+                if row[0][2]==2 or row[0][2]==-2:
+                    del row[0]
+                    
+            all_row_run=all_row_run+row
+    con=1
     return all_row_run
 
 def test(list_signal,l):
-
     global dic_ratio
     global dic_unit
-    total_money=10000000
+    total_money=1200000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -145,7 +157,7 @@ def run(list_signal,l):
     global dic_ratio
     global dic_unit
     global lost_signal
-    total_money=10000000
+    total_money=1200000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -159,14 +171,25 @@ def run(list_signal,l):
     profit=[]
     totalprofit=[]
     for i in list_signal:
-        
         symbol=i[0].upper()
         ID=int(i[-1])
+        lot=l[ID]
         if buy_lot[ID]==0 and i[2]==-2:
+            pro=((i[3]-lost_signal[ID])*dic_unit[symbol]-i[-2]*2)*lot
+            profit_rate.append(pro/(lost_signal[ID]*dic_unit[symbol]*lot))
+            profit.append(pro)
+            total_money=total_money+profit[-1]
+            lost_signal[ID]=0
+            totalprofit.append(sum(profit))
             continue
         if sell_lot[ID]==0 and i[2]==2:
+            pro=((lost_signal[ID]-i[3])*dic_unit[symbol]-i[-2]*2)*lot
+            profit_rate.append(pro/(lost_signal[ID]*dic_unit[symbol]*lot))
+            profit.append(pro)
+            total_money=total_money+profit[-1]
+            totalprofit.append(sum(profit))
+            lost_signal[ID]=0
             continue
-        lot=l[ID]
         if i[2]==1:
             buy_lot[ID]=buy_lot[ID]+lot
             total_money=total_money-i[5]*lot
@@ -185,7 +208,6 @@ def run(list_signal,l):
             profit_rate.append(pro/(buy_price[ID]*dic_unit[symbol]*lot))
             profit.append(pro)
             total_money=total_money+profit[-1]
-            #print profit[-1]
             totalprofit.append(sum(profit))
             if buy_lot[ID]==0:
                 buy_price[ID]=0
@@ -229,7 +251,7 @@ mid=start+t1
 end=start+t2+t1
 row_test=[]
 row_run=[]
-
+con=0
 ##genome = G1DList.G1DList(x_len)
 ###genome.setParams(rangemin=0,rangemax=2)
 ##genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
@@ -246,12 +268,12 @@ temp=[]
 while(end<=stop):
     print end
     genome = G1DList.G1DList(x_len)
-    #genome.setParams(rangemin=0,rangemax=2)
-    genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-    genome.initializator.set(Initializators.G1DListInitializatorInteger_my)#G1DListInitializatorInteger_my)
-    genome.mutator.set(Mutators.G1DListMutatorInteger_my)
+    genome.setParams(rangemin=0,rangemax=20)
+    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
+    genome.initializator.set(Initializators.G1DListInitializatorInteger)
+    genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
     genome.evaluator.set(main_test)
-    genome.crossover.clear()
+    #genome.crossover.clear()
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GRouletteWheel)
     ga.setMutationRate(0.8)

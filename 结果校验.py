@@ -7,7 +7,7 @@ from pyevolve import G1DList
 from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
-f=open('1-1.txt','w+')
+
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 list_zhonglei=[]
@@ -23,7 +23,7 @@ nn=cursor.execute(sql)
 row_dic=cursor.fetchall()
 dic_unit=dict(row_dic)
  
-x_len=21
+x_len=22
 for i in xrange(x_len):
     sql="select * from data where ID=%s ;"%i
     m=cursor.execute(sql)
@@ -75,7 +75,7 @@ def test(list_signal,l):
     global c
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -90,6 +90,7 @@ def test(list_signal,l):
     profit=[]
     totalprofit=[]
     for i in list_signal:
+        print i
         if c==1:
             print sell_lot
             print sell_price
@@ -139,6 +140,9 @@ def test(list_signal,l):
     #print totalprofit[-1]
     if len(profit)==0:
         return 0
+    x=range(0,len(totalprofit))
+    plot(x,totalprofit)
+    show()
     s=sum(profit_rate)/(mystd(profit_rate)*math.sqrt(len(profit_rate)))
     if s<0:
         s=0
@@ -146,7 +150,7 @@ def test(list_signal,l):
 def run(list_signal,l):
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=10000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -160,7 +164,6 @@ def run(list_signal,l):
     profit=[]
     totalprofit=[]
     for i in list_signal:
-        
         symbol=i[0].upper()
         ID=int(i[-1])
         if buy_lot[ID]==0 and i[2]==-2:
@@ -224,66 +227,23 @@ test_days=30
 run_days=30
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
-start=datetime.datetime(2011,3,23,0,0,0)
-stop=datetime.datetime(2013,12,7,0,0,0)
+start=datetime.datetime(2010,7,26,0,0,0)
+stop=datetime.datetime(2014,9,26,0,0,0)
 mid=start+t1
 end=start+t2+t1
 row_test=[]
 row_run=[]
 
-##genome = G1DList.G1DList(x_len)
-###genome.setParams(rangemin=0,rangemax=2)
-##genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-##genome.initializator.set(Initializators.G1DListInitializatorInteger_my)#G1DListInitializatorInteger_my)
-##genome.mutator.set(Mutators.G1DListMutatorInteger_my)
-##genome.evaluator.set(main_test)
-##genome.crossover.clear()
-##ga = GSimpleGA.GSimpleGA(genome)
-##ga.selector.set(Selectors.GRouletteWheel)
-##ga.setMutationRate(0.8)
-##ga.setPopulationSize(20)
-##ga.setGenerations(20)
 temp=[]
-while(end<=stop):
-    s=start.strftime('%y-%m-%d')
-    m=mid.strftime('%y-%m-%d')
-    e=end.strftime('%y-%m-%d')
-    f.write(s+' '+m+' '+e+'\n')
-    print end
-    genome = G1DList.G1DList(x_len)
-    genome.setParams(rangemin=0,rangemax=20)
-    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-    genome.initializator.set(Initializators.G1DListInitializatorInteger)
-    genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
-    genome.evaluator.set(main_test)
-    genome.crossover.clear()
-    ga = GSimpleGA.GSimpleGA(genome)
-    ga.selector.set(Selectors.GRouletteWheel)
-    ga.setMutationRate(0.9)
-    ga.setPopulationSize(80)
-    ga.setGenerations(250)
-    ga.evolve(25)
-    best=ga.bestIndividual()
-    #row_test=output_test([1])
-    #row_run=output_run([0,1])
-##    if len(row_test)>0 and len(row_run)>0:
-##        print len(row_test),1
-##        print len(row_run),2
-    print best[0:]
-    a=best[0:]
-    a=str(a)
-    f.write(a+'\n')
-    temp=temp+main_run(best[0:])
-    start=start+t2
-    mid=mid+t2
-    end=end+t2
-print len(temp)
-proo=[]
-for i in xrange(len(temp)):
-    proo.append(sum(temp[:i+1]))
-x=xrange(len(proo))
-plot(x,proo)
-savefig(r'1-1.png')
-f.close()
+s=start.strftime('%y-%m-%d')
+m=mid.strftime('%y-%m-%d')
+e=end.strftime('%y-%m-%d')
+
+print s,m,e
+a=[0, 0, 5, 0, 100, 27, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+#a=[1]*x_len
+print main_test(a)
+
+
 conn.close()
 cursor.close()
