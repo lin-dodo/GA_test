@@ -73,11 +73,13 @@ def output_run(list_lots):
     return all_row_run
 c=0
 def test(list_signal,l):
-
+    global num_test
+    global num_lost
+    num_test=num_test+1  
     global c
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=5000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -135,6 +137,7 @@ def test(list_signal,l):
             if sell_lot[ID]==0:
                 sell_price[ID]=0
         if total_money<0:
+            num_lost=num_lost+1
             return 0
 ##    if sell_lot!=0 or buy_lot!=0:
 ##        print "wrong"
@@ -148,7 +151,7 @@ def test(list_signal,l):
 def run(list_signal,l):
     global dic_ratio
     global dic_unit
-    total_money=1200000
+    total_money=5000000
     total_cost=0
     #buy_lot=0
     #sell_lot=0
@@ -246,7 +249,10 @@ row_run=[]
 ##ga.setPopulationSize(20)
 ##ga.setGenerations(20)
 temp=[]
+f_per=open('1-1_per.txt','w+')
 while(end<=stop):
+    num_test=0
+    num_lost=0
     s=start.strftime('%y-%m-%d')
     m=mid.strftime('%y-%m-%d')
     e=end.strftime('%y-%m-%d')
@@ -254,17 +260,7 @@ while(end<=stop):
     print end
     genome = G1DList.G1DList(x_len)
     #{'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
-    genome.setParams(range_list=[6,6,200,200,160,160,160,20,20,\
-                                 20,20,88,88,88,110,110,110,80,80,80,80]\
-                     ,index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, \
-                              13,17, 18, 19, 20]\
-                     ,index2=[7, 8, 9, 10,0, 1]\
-                     ,margin=[1000000,1000000,2100,2100,2500,2500,\
-                             2500,23000,23000,23000,23000,4500,\
-                             4500,4500,3600,3600,3600,5400,5400,\
-                             5400,5400]\
-                     )
-    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
+    genome.setParams(range_list=[10,10,30,30,50,50,50,30,30,30,30,40,40,40,25,25,25,20,20,20,20])
     genome.initializator.set(Initializators.G1DListInitializatorInteger)
     genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
     genome.evaluator.set(main_test)
@@ -272,15 +268,19 @@ while(end<=stop):
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GRouletteWheel)
     ga.setMutationRate(0.9)
-    ga.setPopulationSize(100)
+    ga.setPopulationSize(150)
     ga.setGenerations(200)
     ga.evolve(20)
     best=ga.bestIndividual()
     #row_test=output_test([1])
     #row_run=output_run([0,1])
-##    if len(row_test)>0 and len(row_run)>0:
-##        print len(row_test),1
-##        print len(row_run),2
+    ##    if len(row_test)>0 and len(row_run)>0:
+    ##        print len(row_test),1
+    ##        print len(row_run),2
+    per=num_lost/float(num_test)
+    f_per.write(str(per))
+    f_per.write('\n')
+    print num_lost,num_test
     print best[0:]
     a=best[0:]
     a=str(a)
@@ -296,6 +296,7 @@ for i in xrange(len(temp)):
 x=xrange(len(proo))
 plot(x,proo)
 savefig(r'1-1.png')
+f_per.close()
 f.close()
 conn.close()
 cursor.close()

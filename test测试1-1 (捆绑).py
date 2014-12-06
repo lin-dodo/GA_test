@@ -1,13 +1,14 @@
+import copy
 import math
 import time, MySQLdb    
 import datetime
-from pylab import*
 from pyevolve import GSimpleGA
 from pyevolve import G1DList
 from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
-f=open('1-1.txt','w+')
+lot_num=[1,1,14,14,12,12,12,1,1,1,1,7,7,7,8,8,8,5,5,5,5]
+f=open('6-3.txt','w+')
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, 13,17, 18, 19, 20]
@@ -72,8 +73,11 @@ def output_run(list_lots):
             all_row_run=all_row_run+list(row)
     return all_row_run
 c=0
-def test(list_signal,l):
-
+def test(list_signal,ll):
+    a=ll[0:]
+    l=copy.deepcopy(a)
+    for ii in xrange(21):
+        l[ii]=l[ii]*lot_num[ii]
     global c
     global dic_ratio
     global dic_unit
@@ -145,9 +149,14 @@ def test(list_signal,l):
     if s<0:
         s=0
     return s
-def run(list_signal,l):
+def run(list_signal,ll):
+    print ll,1
     global dic_ratio
     global dic_unit
+    l=copy.deepcopy(ll)
+    for ii in xrange(21):
+        l[ii]=l[ii]*lot_num[ii]
+    print l,2
     total_money=1200000
     total_cost=0
     #buy_lot=0
@@ -222,8 +231,8 @@ def main_run(l):
     a=run(all_row,l)
     return a
 
-test_days=30
-run_days=30
+test_days=180
+run_days=90
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
 start=datetime.datetime(2011,3,23,0,0,0)
@@ -254,16 +263,7 @@ while(end<=stop):
     print end
     genome = G1DList.G1DList(x_len)
     #{'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
-    genome.setParams(range_list=[6,6,200,200,160,160,160,20,20,\
-                                 20,20,88,88,88,110,110,110,80,80,80,80]\
-                     ,index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, \
-                              13,17, 18, 19, 20]\
-                     ,index2=[7, 8, 9, 10,0, 1]\
-                     ,margin=[1000000,1000000,2100,2100,2500,2500,\
-                             2500,23000,23000,23000,23000,4500,\
-                             4500,4500,3600,3600,3600,5400,5400,\
-                             5400,5400]\
-                     )
+    genome.setParams(rangemin=0,rangemax=8)
     #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
     genome.initializator.set(Initializators.G1DListInitializatorInteger)
     genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
@@ -272,9 +272,9 @@ while(end<=stop):
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GRouletteWheel)
     ga.setMutationRate(0.9)
-    ga.setPopulationSize(100)
-    ga.setGenerations(200)
-    ga.evolve(20)
+    ga.setPopulationSize(150)
+    ga.setGenerations(20)
+    ga.evolve(2)
     best=ga.bestIndividual()
     #row_test=output_test([1])
     #row_run=output_run([0,1])
@@ -283,6 +283,8 @@ while(end<=stop):
 ##        print len(row_run),2
     print best[0:]
     a=best[0:]
+    for ii in xrange(21):
+        a[ii]=a[ii]*lot_num[ii]
     a=str(a)
     f.write(a+'\n')
     temp=temp+main_run(best[0:])
@@ -294,8 +296,9 @@ proo=[]
 for i in xrange(len(temp)):
     proo.append(sum(temp[:i+1]))
 x=xrange(len(proo))
+from pylab import*
 plot(x,proo)
-savefig(r'1-1.png')
+savefig(r'6-3.png')
 f.close()
 conn.close()
 cursor.close()

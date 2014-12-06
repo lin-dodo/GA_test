@@ -252,10 +252,19 @@ while(end<=stop):
     
     print end
     genome = G1DList.G1DList(x_len)
-    #genome.setParams(rangemin=0,rangemax=2)
-    genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
-    genome.initializator.set(Initializators.G1DListInitializatorInteger_my)#G1DListInitializatorInteger_my)
-    genome.mutator.set(Mutators.G1DListMutatorInteger_my)
+    genome.setParams(range_list=[6,6,200,200,160,160,160,20,20,\
+                                 20,20,88,88,88,110,110,110,80,80,80,80]\
+                     ,index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, \
+                              13,17, 18, 19, 20]\
+                     ,index2=[7, 8, 9, 10,0, 1]\
+                     ,margin=[1000000,1000000,2100,2100,2500,2500,\
+                             2500,23000,23000,23000,23000,4500,\
+                             4500,4500,3600,3600,3600,5400,5400,\
+                             5400,5400]\
+                     )
+    #genome.My_set(list_dic,list_margin,1000000,list_zhonglei)
+    genome.initializator.set(Initializators.G1DListInitializatorInteger)
+    genome.mutator.set(Mutators.G1DListMutatorIntegerGaussian)
     genome.evaluator.set(main_test)
     genome.crossover.clear()
     ga = GSimpleGA.GSimpleGA(genome)
