@@ -296,7 +296,7 @@ while(end<=stop):
     a=best[0:]
     for ii in xrange(21):
         a[ii]=a[ii]*lot_num[ii]
-    a=str(a)e
+    a=str(a)
     f.write(a+'\n')
     temp=temp+main_run(best[0:])
     start=start+t2

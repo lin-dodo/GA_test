@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import math
+import random
 import time, MySQLdb    
 import datetime
 from pyevolve import GSimpleGA
@@ -9,7 +10,7 @@ from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
 lot_num=[1,1,14,14,12,12,12,1,1,1,1,7,7,7,8,8,8,5,5,5,5]
-f=open('3-1-打包.txt','w+')
+f=open('打包-修复-1000-1-1-150-200.txt','w+')
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, 13,17, 18, 19, 20]
@@ -144,6 +145,7 @@ def test(list_signal,ll):
                 sell_price[ID]=0
         if total_money<0:
             num_lost=num_lost+1
+            #print 'wrong',total_money
             return 0
 ##    if sell_lot!=0 or buy_lot!=0:
 ##        print "wrong"
@@ -223,11 +225,27 @@ def run(list_signal,ll):
     return profit
 
 def main_test(l):
-    all_row=output_test(l)
+    #修复算法：
+    s=0
+    for i in xrange(x_len):
+        s=s+l[i]*list_margin[list_zhonglei[i]]*lot_num[i]
+    if s>10000000:
+        index=range(0,x_len)
+        while(1):
+            ii=random.choice(index)
+            index.remove(ii)
+            if l[ii]>0:
+                l[ii]=l[ii]-1
+                s=s-list_margin[list_zhonglei[ii]]*lot_num[ii]
+            if s<=10000000:
+                break
+            if len(index)==0:
+                index=range(0,x_len)
+    all_row=output_test(l[0:])
     if len(all_row)==0:
         return 0
     all_row.sort(key=lambda x:x[1])
-    a=test(all_row,l)
+    a=test(all_row,l[:])
     return a
 def main_run(l):
     all_row=output_run(l)
@@ -237,7 +255,7 @@ def main_run(l):
     a=run(all_row,l)
     return a
 
-test_days=90
+test_days=30
 run_days=30
 t1=datetime.timedelta(days=test_days)
 t2=datetime.timedelta(days=run_days)
@@ -260,8 +278,9 @@ row_run=[]
 ##ga.setMutationRate(0.8)
 ##ga.setPopulationSize(20)
 ##ga.setGenerations(20)
+
 temp=[]
-f_per=open('3-1dabao_per.txt','w+')
+f_per=open('打包-修复-1000-1-1-150-200-per.txt','w+')
 while(end<=stop):
     num_test=0
     num_lost=0
@@ -296,7 +315,7 @@ while(end<=stop):
     a=best[0:]
     for ii in xrange(21):
         a[ii]=a[ii]*lot_num[ii]
-    a=str(a)e
+    a=str(a)
     f.write(a+'\n')
     temp=temp+main_run(best[0:])
     start=start+t2
@@ -309,7 +328,7 @@ for i in xrange(len(temp)):
 x=xrange(len(proo))
 from pylab import*
 plot(x,proo)
-savefig(r'3-1-打包.png')
+savefig(r'打包-修复-1000-1-1-150-200.png')
 f_per.close()
 f.close()
 conn.close()

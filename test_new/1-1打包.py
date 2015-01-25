@@ -9,7 +9,7 @@ from pyevolve import Selectors
 from pyevolve import Initializators, Mutators
 import pyevolve
 lot_num=[1,1,14,14,12,12,12,1,1,1,1,7,7,7,8,8,8,5,5,5,5]
-f=open('3-1-打包.txt','w+')
+f=open('1-1-打包.txt','w+')
 list_dic={'IF':[],'CU':[],'I':[],'M':[],'RU':[],'SR':[],'RB':[],'TA':[],'Y':[]}
 list_margin={'IF':100000,'CU':30000,'RU':23000,'I':3500,'M':2100,'RB':2500,'SR':4500,'TA':3600,'Y':5400}
 index1=[2, 3,4, 5, 6,14, 15, 16,11, 12, 13,17, 18, 19, 20]
@@ -27,7 +27,7 @@ nn=cursor.execute(sql)
 row_dic=cursor.fetchall()
 dic_unit=dict(row_dic)
  
-x_len=21
+x_len=4
 for i in xrange(x_len):
     sql="select * from data where ID=%s ;"%i
     m=cursor.execute(sql)
@@ -80,7 +80,7 @@ def test(list_signal,ll):
     num_test=num_test+1
     a=ll[0:]
     l=copy.deepcopy(a)
-    for ii in xrange(21):
+    for ii in xrange(4):
         l[ii]=l[ii]*lot_num[ii]
     global c
     global dic_ratio
@@ -160,7 +160,7 @@ def run(list_signal,ll):
     global dic_ratio
     global dic_unit
     l=copy.deepcopy(ll)
-    for ii in xrange(21):
+    for ii in xrange(4):
         l[ii]=l[ii]*lot_num[ii]
     print l,2
     total_money=10000000
@@ -261,7 +261,7 @@ row_run=[]
 ##ga.setPopulationSize(20)
 ##ga.setGenerations(20)
 temp=[]
-f_per=open('3-1dabao_per.txt','w+')
+f_per=open('1-1dabao_per.txt','w+')
 while(end<=stop):
     num_test=0
     num_lost=0
@@ -294,9 +294,9 @@ while(end<=stop):
     print num_lost,num_test
     print best[0:]
     a=best[0:]
-    for ii in xrange(21):
+    for ii in xrange(4):
         a[ii]=a[ii]*lot_num[ii]
-    a=str(a)e
+    a=str(a)
     f.write(a+'\n')
     temp=temp+main_run(best[0:])
     start=start+t2
@@ -307,10 +307,11 @@ proo=[]
 for i in xrange(len(temp)):
     proo.append(sum(temp[:i+1]))
 x=xrange(len(proo))
-from pylab import*
-plot(x,proo)
-savefig(r'3-1-打包.png')
 f_per.close()
 f.close()
+from pylab import*
+plot(x,proo)
+savefig(r'1-1-打包.png')
+
 conn.close()
 cursor.close()
